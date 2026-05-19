@@ -105,7 +105,7 @@
 
 <?php require "navbar.php"; ?>
 
-<div class="container-fluid benner d-flex align-items-center justify-content-center">
+<div class="container-fluid bennerbaru d-flex align-items-center justify-content-center">
     <div class="container text-white text-center hero-content">
         <h1 class="display-1 fw-bold mb-3 text-white">THE FOUR LABEL</h1>
         <p class="fs-3 fst-italic"><span class="typed"></span></p>

@@ -1,105 +1,68 @@
 <?php
-
 session_start();
-
 require "koneksi.php";
 
 // =========================
-// VALIDASI SESSION
+// VALIDASI LOGIN
 // =========================
-
-if(!isset($_SESSION['last_id'])){
+if(!isset($_SESSION['pelanggan'])){
 
     echo "
-
     <script>
-
-    alert('Selesaikan pesanan terlebih dahulu');
-
-    location='produk.php';
-
+        alert('Silakan login terlebih dahulu');
+        location='login.php';
     </script>
-
     ";
 
     exit;
-
 }
 
-$id_transaksi = $_SESSION['last_id'];
+// =========================
+// AMBIL DATA LOGIN
+// =========================
+$id_pelanggan   = $_SESSION['pelanggan']['id_pelanggan'];
+$nama_pelanggan = $_SESSION['pelanggan']['nama_pelanggan'];
 
 // =========================
-// QUERY TRANSAKSI
+// QUERY PESANAN
+// NOTE:
+// tbl_transaksi memakai id_customer
+// sedangkan login memakai id_pelanggan
 // =========================
-
-$query = "
-
-SELECT
-
-    t.*,
-    p.nama_pelanggan,
-    p.email_pelanggan,
-    p.telepon_pelanggan,
-    p.alamat_pelanggan
-
-FROM tbl_transaksi t
-
-JOIN pelanggan p
-ON t.id_pelanggan = p.id_pelanggan
-
-WHERE t.id_transaksi = '$id_transaksi'
-
-";
-
-$ambil = mysqli_query($koneksi, $query);
-
-$pecah = mysqli_fetch_assoc($ambil);
+$query = mysqli_query($koneksi,"
+    SELECT *
+    FROM tbl_transaksi
+    WHERE id_pelanggan = '$id_pelanggan'
+    ORDER BY id_transaksi DESC
+");
 
 // =========================
-// VALIDASI DATA
+// DEBUG ERROR SQL
 // =========================
-
-if(!$pecah){
-
-    echo "
-
-    <script>
-
-    alert('Data transaksi tidak ditemukan');
-
-    location='produk.php';
-
-    </script>
-
-    ";
-
-    exit;
-
+if(!$query){
+    die("Query Error : ".mysqli_error($koneksi));
 }
-
 ?>
 
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pesanan Saya</title>
 
-    <title>
-        Status Pesanan | Fashion Gassspol
-    </title>
-
-    <link rel="stylesheet"
-          href="bootstrap-5.3.8-dist/css/bootstrap.min.css">
-
-    <link rel="stylesheet"
-          href="fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="bootstrap-5.3.8-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="fontawesome/css/all.min.css">
 
     <style>
 
         body{
             background:#f5f6fa;
+            font-family:Arial, Helvetica, sans-serif;
+        }
+
+        .navbar{
+            box-shadow:0 2px 10px rgba(0,0,0,0.1);
         }
 
         .card-order{
@@ -109,42 +72,37 @@ if(!$pecah){
         }
 
         .status-badge{
-            background:#fff3cd;
-            color:#856404;
             padding:7px 18px;
             border-radius:50px;
+            font-size:13px;
             font-weight:bold;
             display:inline-block;
         }
 
-        .section-title{
-            font-size:14px;
-            font-weight:bold;
-            color:#198754;
-            margin-bottom:10px;
-            border-bottom:2px solid #f0f0f0;
-            padding-bottom:5px;
+        .status-pending{
+            background:#fff3cd;
+            color:#856404;
+        }
+
+        .status-proses{
+            background:#cff4fc;
+            color:#055160;
+        }
+
+        .status-selesai{
+            background:#d1e7dd;
+            color:#0f5132;
         }
 
         .table thead th{
             background:#f8f9fa;
             text-transform:uppercase;
-            font-size:12px;
-        }
-
-        .product-name{
-            font-weight:600;
-            color:#212529;
-        }
-
-        .total-row{
-            background:#fafafa;
+            font-size:13px;
         }
 
     </style>
 
 </head>
-
 <body>
 
 <!-- NAVBAR -->
@@ -152,173 +110,53 @@ if(!$pecah){
 
     <div class="container">
 
-        <a class="navbar-brand fw-bold text-success"
-           href="index.php">
+        <a href="index.php"
+           class="navbar-brand fw-bold text-success">
 
-            FASHION
-            <span class="text-white">
-                GASSSPOL
-            </span>
+            THE FOUR LABEL
 
         </a>
+
+        <span class="text-white">
+
+            Halo,
+            <b><?= htmlspecialchars($nama_pelanggan); ?></b>
+
+        </span>
 
     </div>
 
 </nav>
 
 <!-- CONTENT -->
-<div class="container py-4">
+<div class="container">
 
-    <!-- TITLE -->
-    <div class="text-center mb-5">
-
-        <h2 class="fw-bold">
-
-            Terima Kasih,
-            <?= $pecah['nama_pelanggan']; ?> !
-
-        </h2>
-
-        <p class="text-muted">
-
-            Pesanan Anda telah kami terima
-
-        </p>
-
-    </div>
-
-    <!-- CARD -->
-    <div class="card card-order mx-auto"
-         style="max-width:900px;">
+    <div class="card card-order">
 
         <div class="card-body p-4">
 
-            <!-- HEADER -->
-            <div class="row mb-4">
+            <h3 class="fw-bold mb-4">
 
-                <div class="col-6">
+                Riwayat Pesanan Saya
 
-                    <small class="text-muted">
-                        NO. TRANSAKSI
-                    </small>
+            </h3>
 
-                    <h5 class="fw-bold text-primary">
+            <?php if(mysqli_num_rows($query) > 0){ ?>
 
-                        #TRX-<?= $pecah['id_transaksi']; ?>
+            <div class="table-responsive">
 
-                    </h5>
-
-                </div>
-
-                <div class="col-6 text-end">
-
-                    <small class="text-muted">
-                        TANGGAL
-                    </small>
-
-                    <h5 class="fw-bold">
-
-                        <?= date(
-                            "d F Y",
-                            strtotime(
-                                $pecah['tanggal_transaksi']
-                            )
-                        ); ?>
-
-                    </h5>
-
-                </div>
-
-            </div>
-
-            <!-- CUSTOMER -->
-            <div class="row mb-4">
-
-                <div class="col-md-6">
-
-                    <div class="section-title">
-                        Informasi Pelanggan
-                    </div>
-
-                    <p class="mb-1 text-secondary small">
-                        Nama Lengkap
-                    </p>
-
-                    <p class="fw-bold">
-
-                        <?= $pecah['nama_pelanggan']; ?>
-
-                    </p>
-
-                    <p class="mb-1 text-secondary small">
-                        Kontak
-                    </p>
-
-                    <p class="fw-bold mb-1">
-
-                        <?= $pecah['email_pelanggan']; ?>
-
-                    </p>
-
-                    <p class="fw-bold mb-1">
-
-                        <?= $pecah['telepon_pelanggan']; ?>
-
-                    </p>
-
-                    <p class="text-muted">
-
-                        <?= $pecah['alamat_pelanggan']; ?>
-
-                    </p>
-
-                </div>
-
-                <!-- STATUS -->
-                <div class="col-md-6 text-md-end">
-
-                    <div class="section-title">
-                        Status Pesanan
-                    </div>
-
-                    <span class="status-badge">
-
-                        <?= $pecah['status_transaksi']; ?>
-
-                    </span>
-
-                </div>
-
-            </div>
-
-            <!-- TABLE -->
-            <div class="section-title">
-                Rincian Produk
-            </div>
-
-            <div class="table-responsive mb-4">
-
-                <table class="table table-hover border">
+                <table class="table table-hover align-middle border">
 
                     <thead>
 
                         <tr>
 
-                            <th class="px-3 py-3">
-                                Produk
-                            </th>
-
-                            <th class="text-center py-3">
-                                Qty
-                            </th>
-
-                            <th class="text-end py-3">
-                                Harga
-                            </th>
-
-                            <th class="text-end px-3 py-3">
-                                Subtotal
-                            </th>
+                            <th>No Transaksi</th>
+                            <th>Tanggal</th>
+                            <th>Total Produk</th>
+                            <th>Total Harga</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
 
                         </tr>
 
@@ -326,127 +164,101 @@ if(!$pecah){
 
                     <tbody>
 
-                    <?php
+                    <?php while($data = mysqli_fetch_assoc($query)){ ?>
 
-                    $queryDetail = "
+                        <?php
 
-                    SELECT
+                        $status = strtolower($data['status_transaksi']);
 
-                        dt.*,
-                        p.nama,
-                        p.harga
+                        if($status == 'proses'){
 
-                    FROM tbl_detail_transaksi dt
+                            $class = 'status-proses';
 
-                    JOIN tbl_produk p
-                    ON dt.id_produk = p.id
+                        }elseif($status == 'selesai'){
 
-                    WHERE dt.id_transaksi = '$id_transaksi'
+                            $class = 'status-selesai';
 
-                    ";
+                        }else{
 
-                    $ambilDetail = mysqli_query(
-                        $koneksi,
-                        $queryDetail
-                    );
+                            $class = 'status-pending';
 
-                    while($item = mysqli_fetch_assoc($ambilDetail)):
+                        }
 
-                        $subtotal =
-                            $item['harga']
-                            *
-                            $item['jumlah'];
-
-                    ?>
+                        ?>
 
                         <tr>
 
-                            <td class="product-name px-3 py-3">
+                            <td>
 
-                                <?= $item['nama']; ?>
+                                <span class="fw-bold text-primary">
 
-                            </td>
+                                    #TRX-<?= $data['id_transaksi']; ?>
 
-                            <td class="text-center py-3">
-
-                                <?= $item['jumlah']; ?>
+                                </span>
 
                             </td>
 
-                            <td class="text-end py-3">
+                            <td>
 
-                                Rp <?= number_format(
-                                    $item['harga'],
-                                    0,
-                                    ',',
-                                    '.'
-                                ); ?>
+                                <?= date('d F Y', strtotime($data['tanggal_transaksi'])); ?>
 
                             </td>
 
-                            <td class="text-end px-3 py-3 fw-bold">
+                            <td>
 
-                                Rp <?= number_format(
-                                    $subtotal,
-                                    0,
-                                    ',',
-                                    '.'
-                                ); ?>
+                                <?= $data['total_produk']; ?> Produk
+
+                            </td>
+
+                            <td class="fw-bold text-success">
+
+                                Rp <?= number_format($data['total_harga'],0,',','.'); ?>
+
+                            </td>
+
+                            <td>
+
+                                <span class="status-badge <?= $class; ?>">
+
+                                    <?= ucfirst($data['status_transaksi']); ?>
+
+                                </span>
+
+                            </td>
+
+                            <td>
+
+                                <a href="detail-pesanan.php?id=<?= $data['id_transaksi']; ?>"
+                                   class="btn btn-success btn-sm">
+
+                                    <i class="fa fa-eye"></i>
+                                    Detail
+
+                                </a>
 
                             </td>
 
                         </tr>
 
-                    <?php endwhile; ?>
+                    <?php } ?>
 
                     </tbody>
-
-                    <tfoot>
-
-                        <tr class="total-row">
-
-                            <th colspan="3"
-                                class="text-end py-3">
-
-                                Total Bayar
-
-                            </th>
-
-                            <th class="text-end
-                                       text-success
-                                       fs-5
-                                       px-3
-                                       py-3">
-
-                                Rp <?= number_format(
-                                    $pecah['total_harga'],
-                                    0,
-                                    ',',
-                                    '.'
-                                ); ?>
-
-                            </th>
-
-                        </tr>
-
-                    </tfoot>
 
                 </table>
 
             </div>
 
-            <!-- BUTTON -->
-            <div class="d-grid">
+            <?php }else{ ?>
 
-                <a href="index.php"
-                   class="btn btn-success
-                          p-3 fw-bold shadow-sm">
+                <div class="alert alert-warning">
 
-                    Kembali ke Beranda
+                    <i class="fa fa-exclamation-circle"></i>
 
-                </a>
+                    Belum ada pesanan
 
-            </div>
+                </div>
+
+            <?php } ?>
 
         </div>
 

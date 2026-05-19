@@ -269,7 +269,7 @@ section {
 
 .benner{
     height: 80vh;
-    background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('../image/kanja.jpg');
+    background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('../image/lavender.jpeg');
 }
 
 .highlighted-kategori{
@@ -345,7 +345,7 @@ section {
 
 .bennerbaru{
     height: 50vh;
-    background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('../image/lavender2.jpg');
+    background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('../image/lavender3.jpg');
     background-position: 50% 30%;
 }
 
