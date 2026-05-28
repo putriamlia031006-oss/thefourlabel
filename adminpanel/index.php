@@ -494,7 +494,7 @@
                         <span class="card-mini-label">Laporan</span>
                     </div>
 
-                    <p class="card-title">Laporan Penjualan</p>
+                    <p class="card-title">Laporan</p>
                     <h3 class="card-value">Cetak</h3>
 
                     <div class="card-footer-custom">
