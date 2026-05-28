@@ -27,7 +27,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TEH FOUR LABEL | Produk</title>
+    <title>THE FOUR LABEL | Produk</title>
 
     <link rel="stylesheet" href="bootstrap-5.3.8-dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="fontawesome/css/all.min.css">
