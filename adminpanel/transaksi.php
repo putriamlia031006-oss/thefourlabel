@@ -153,7 +153,7 @@ $jumlahTransaksi = mysqli_num_rows($queryTransaksi);
                     </td>
                     <td class="text-center">
                         <a href="edit_transaksi.php?id=<?= $t['id_transaksi']; ?>" class="btn btn-sm btn-warning shadow-sm" title="Edit Transaksi">
-                            <i class="fas fa-edit"></i> Edit
+                            <i class="fas fa-edit"></i> Edittt
                         </a>
                     </td>
                 </tr>
