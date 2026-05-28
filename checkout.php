@@ -262,35 +262,6 @@
                                 <h5 class="fw-bold mb-0">Metode Pembayaran</h5>
                             </div>
                             <p class="small text-muted mb-3 italic">* Silahkan pilih metode pembayaran</p>
-                            <div class="row g-3">
-                                <div class="col-md-6 col-lg-4">
-                                    <input type="radio" class="form-check-input d-none" name="pembayaran" id="bca" value="Transfer Bank BCA">
-                                    <label for="bca" class="selection-card pay-bca">
-                                        <span class="fw-bold d-block" style="color: #005aa1;">Bank BCA</span>
-                                        <small class="text-muted">Transfer / M-Banking</small>
-                                    </label>
-                                </div>
-                                <div class="col-md-6 col-lg-4">
-                                    <input type="radio" class="form-check-input d-none" name="pembayaran" id="mandiri" value="Transfer Bank Mandiri">
-                                    <label for="mandiri" class="selection-card pay-mandiri">
-                                        <span class="fw-bold d-block" style="color: #c49100;">Bank Mandiri</span>
-                                        <small class="text-muted">Transfer / Livin</small>
-                                    </label>
-                                </div>
-                                <div class="col-md-6 col-lg-4">
-                                    <input type="radio" class="form-check-input d-none" name="pembayaran" id="qris" value="QRIS">
-                                    <label for="qris" class="selection-card pay-qris">
-                                        <span class="fw-bold d-block text-danger">QRIS</span>
-                                        <small class="text-muted">Scan Semua Aplikasi</small>
-                                    </label>
-                                </div>
-                                <div class="col-md-6 col-lg-4">
-                                    <input type="radio" class="form-check-input d-none" name="pembayaran" id="ewallet" value="Dana / OVO / Gopay">
-                                    <label for="ewallet" class="selection-card pay-ewallet">
-                                        <span class="fw-bold d-block" style="color: #00b4db;">E-Wallet</span>
-                                        <small class="text-muted">Dana, OVO, Gopay</small>
-                                    </label>
-                                </div>
                                 <div class="col-md-6 col-lg-4">
                                     <input type="radio" class="form-check-input d-none" name="pembayaran" id="retail" value="Indomaret / Alfamart">
                                     <label for="retail" class="selection-card pay-retail">

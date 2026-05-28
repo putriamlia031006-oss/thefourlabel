@@ -4,9 +4,9 @@ require "../koneksi.php";
 
 // Query JOIN untuk mengambil nama customer dari tbl_customer
 $queryTransaksi = mysqli_query($koneksi, "
-    SELECT t.*, c.nama_customer
+    SELECT t.*, p.nama_pelanggan
     FROM tbl_transaksi t
-    JOIN tbl_customer c ON t.id_customer = c.id_customer
+    JOIN pelanggan p ON t.id_pelanggan = p.id_pelanggan
     ORDER BY t.id_transaksi DESC
 ");
 
@@ -142,7 +142,7 @@ $jumlahTransaksi = mysqli_num_rows($queryTransaksi);
             ?>
                 <tr>
                     <td class="text-center text-muted"><?= $no++; ?></td>
-                    <td class="fw-semibold"><?= $t['nama_customer']; ?></td>
+                    <td class="fw-semibold"><?= $t['nama_pelanggan']; ?></td>
                     <td><?= date('d M Y', strtotime($t['tanggal_transaksi'])); ?></td>
                     <td><span class="badge bg-light text-dark border"><?= $t['total_produk']; ?> Item</span></td>
                     <td class="fw-bold text-success">Rp <?= number_format($t['total_harga'], 0, ',', '.'); ?></td>
