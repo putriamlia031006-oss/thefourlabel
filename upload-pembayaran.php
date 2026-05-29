@@ -1,4 +1,3 @@
-```php id="w1op3m"
 <?php
 session_start();
 require "koneksi.php";

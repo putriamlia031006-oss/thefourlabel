@@ -345,21 +345,28 @@ $jumlahTransaksi = mysqli_num_rows($queryTransaksi);
                     while($t = mysqli_fetch_assoc($queryTransaksi)){
                         
                         $status = $t['status_transaksi'];
+                        $status_lower = strtolower($status);
+
                         $warna_badge = "bg-lainnya"; 
                         $icon_status = "fas fa-circle";
+                        $status_tampil = ucfirst($status_lower);
 
-                        if($status == 'Pending'){
+                        if($status_lower == 'pending'){
                             $warna_badge = "bg-pending";
                             $icon_status = "fas fa-clock";
-                        } elseif($status == 'Proses'){
+                            $status_tampil = "Pending";
+                        } elseif($status_lower == 'proses'){
                             $warna_badge = "bg-proses";
                             $icon_status = "fas fa-spinner";
-                        } elseif($status == 'Selesai'){
+                            $status_tampil = "Proses";
+                        } elseif($status_lower == 'selesai'){
                             $warna_badge = "bg-selesai";
                             $icon_status = "fas fa-check-circle";
-                        } elseif($status == 'Dibatalkan'){
+                            $status_tampil = "Selesai";
+                        } elseif($status_lower == 'dibatalkan'){
                             $warna_badge = "bg-batal";
                             $icon_status = "fas fa-times-circle";
+                            $status_tampil = "Dibatalkan";
                         }
                 ?>
                     <tr>
@@ -387,7 +394,7 @@ $jumlahTransaksi = mysqli_num_rows($queryTransaksi);
                         <td class="text-center">
                             <span class="badge-status <?= $warna_badge; ?>">
                                 <i class="<?= $icon_status; ?>"></i>
-                                <?= $status; ?>
+                                <?= $status_tampil; ?>
                             </span>
                         </td>
 

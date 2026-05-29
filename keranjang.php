@@ -73,30 +73,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FASHION GASSSPOL | KERANJANG</title>
+    <title>THE FOUR LABEL | KERANJANG</title>
+
     <link rel="stylesheet" href="bootstrap-5.3.8-dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="fontawesome/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
-        body { background-color: #f8f9fa; }
-        .card-ringkasan-fix { border-radius: 15px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.08); background: #ffffff; }
-        .summary-header { background: #578FCA; padding: 20px; color: white; border-radius: 15px 15px 0 0; }
-        /* Mengubah warna tombol checkout menjadi Biru */
-        .btn-checkout { background: #578FCA; border: none; padding: 12px; border-radius: 10px; transition: 0.3s; font-size: 0.9rem; letter-spacing: 0.5px; color: white; }
-        .btn-checkout:hover:not(.disabled) { background: #4578ab; transform: translateY(-2px); color: white; }
-        .total-price { font-size: 1.5rem; color: #578FCA; font-weight: 800; }
-        .promo-badge { background-color: #eef5ff; color: #578FCA; padding: 5px 15px; border-radius: 50px; font-size: 0.8rem; font-weight: 600; }
-        .table thead th { border: none; color: #6c757d; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
-        .product-img { width: 80px; height: 80px; object-fit: cover; border-radius: 12px; transition: 0.3s; }
-        .form-check-input:checked { background-color: #578FCA; border-color: #578FCA; }
-        .qty-input { max-width: 80px; border-radius: 8px; border: 1px solid #dee2e6; padding: 5px; }
-        /* Warna teks biru untuk subtotal */
-        .text-subtotal { color: #578FCA; font-weight: bold; }
-        /* Link warna biru */
-        .text-blue-custom { color: #578FCA !important; }
+        :root {
+            --primary: #7c3aed;
+            --primary-dark: #4c1d95;
+            --primary-light: #a78bfa;
+            --primary-soft: #ede9fe;
+            --primary-bg: #f7f3ff;
+            --text-dark: #261447;
+            --text-muted: #7c728f;
+        }
+
+        body {
+            background:
+                radial-gradient(circle at top left, rgba(124, 58, 237, 0.12), transparent 32%),
+                radial-gradient(circle at bottom right, rgba(167, 139, 250, 0.16), transparent 28%),
+                linear-gradient(135deg, #fbfaff 0%, #f3ecff 45%, #eee7ff 100%);
+            color: var(--text-dark);
+        }
+
+        .card-ringkasan-fix {
+            border-radius: 18px;
+            border: 1px solid rgba(124, 58, 237, 0.10);
+            box-shadow: 0 12px 28px rgba(76, 29, 149, 0.10);
+            background: #ffffff;
+            overflow: hidden;
+        }
+
+        .summary-header {
+            background: linear-gradient(135deg, #4c1d95 0%, #7c3aed 55%, #a78bfa 100%);
+            padding: 20px;
+            color: white;
+            border-radius: 18px 18px 0 0;
+        }
+
+        .btn-checkout {
+            background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%);
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            transition: 0.3s;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            color: white;
+            box-shadow: 0 8px 18px rgba(124, 58, 237, 0.20);
+        }
+
+        .btn-checkout:hover:not(.disabled) {
+            background: linear-gradient(135deg, #4c1d95 0%, #7c3aed 100%);
+            transform: translateY(-2px);
+            color: white;
+            box-shadow: 0 10px 22px rgba(76, 29, 149, 0.25);
+        }
+
+        .total-price {
+            font-size: 1.5rem;
+            color: var(--primary);
+            font-weight: 800;
+        }
+
+        .promo-badge {
+            background-color: var(--primary-soft);
+            color: var(--primary-dark);
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 800;
+        }
+
+        .table thead th {
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .table tbody tr:hover {
+            background-color: #faf5ff;
+        }
+
+        .product-img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 12px;
+            transition: 0.3s;
+        }
+
+        .form-check-input:checked {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .form-check-input:focus {
+            box-shadow: 0 0 0 0.25rem rgba(124, 58, 237, 0.18);
+            border-color: var(--primary);
+        }
+
+        .qty-input {
+            max-width: 80px;
+            border-radius: 8px;
+            border: 1px solid rgba(124, 58, 237, 0.18);
+            padding: 5px;
+        }
+
+        .qty-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.2rem rgba(124, 58, 237, 0.14);
+        }
+
+        .text-subtotal {
+            color: var(--primary);
+            font-weight: 800;
+        }
+
+        .text-lavender-custom {
+            color: var(--primary) !important;
+        }
+
+        .cart-card {
+            border-radius: 18px !important;
+            overflow: hidden;
+            border: 1px solid rgba(124, 58, 237, 0.09) !important;
+            box-shadow: 0 12px 28px rgba(76, 29, 149, 0.08) !important;
+        }
+
+        .btn-remove {
+            background: #fff;
+            color: #dc3545;
+            border: 1px solid #fee2e2;
+        }
+
+        .btn-remove:hover {
+            background: #fee2e2;
+            color: #991b1b;
+        }
     </style>
 </head>
+
 <body>
     
     <?php require "navbar.php"; ?>
@@ -104,16 +227,21 @@
     <div class="container py-5">
         <nav aria-label="breadcrumb" class="mb-4">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="index.php" class="text-decoration-none text-muted small">Home</a></li>
-                <li class="breadcrumb-item active small text-blue-custom fw-bold" aria-current="page">Keranjang</li>
+                <li class="breadcrumb-item">
+                    <a href="index.php" class="text-decoration-none text-muted small">Home</a>
+                </li>
+                <li class="breadcrumb-item active small text-lavender-custom fw-bold" aria-current="page">
+                    Keranjang
+                </li>
             </ol>
         </nav>
 
         <div class="row align-items-end mb-4">
             <div class="col-md-6">
-                <h3 class="fw-bold mb-0">Tas Belanja Anda</h3>
+                <h3 class="fw-bold mb-0" style="color: var(--primary-dark);">Tas Belanja Anda</h3>
                 <p class="text-muted small">Pastikan item yang Anda pilih sudah sesuai</p>
             </div>
+
             <div class="col-md-6 text-md-end">
                 <?php if (!empty($_SESSION['keranjang'])): ?>
                     <button type="button" id="btn-hapus-massal" class="btn btn-outline-danger btn-sm rounded-pill px-4 d-none shadow-sm">
@@ -127,7 +255,8 @@
             <div class="col-lg-8">
                 <form id="form-bulk-delete" action="" method="POST">
                     <input type="hidden" name="hapus_terpilih" value="1">
-                    <div class="card shadow-sm border-0 mb-4" style="border-radius: 15px; overflow: hidden;">
+
+                    <div class="card border-0 mb-4 cart-card">
                         <div class="table-responsive">
                             <table class="table align-middle mb-0">
                                 <thead class="bg-white">
@@ -142,14 +271,17 @@
                                         <th class="pe-4 py-4"></th>
                                     </tr>
                                 </thead>
+
                                 <tbody class="bg-white">
                                     <?php if (empty($_SESSION['keranjang'])): ?>
                                         <tr>
                                             <td colspan="6" class="text-center py-5">
                                                 <div class="py-4">
-                                                    <i class="fas fa-shopping-bag fa-4x mb-3 text-light"></i>
+                                                    <i class="fas fa-shopping-bag fa-4x mb-3" style="color: #ddd6fe;"></i>
                                                     <h5 class="text-muted">Keranjang Anda kosong</h5>
-                                                    <a href="produk.php" class="btn btn-checkout rounded-pill px-4 mt-2">Mulai Belanja</a>
+                                                    <a href="produk.php" class="btn btn-checkout rounded-pill px-4 mt-2">
+                                                        Mulai Belanja
+                                                    </a>
                                                 </div>
                                             </td>
                                         </tr>
@@ -162,22 +294,46 @@
                                                 <td class="ps-4">
                                                     <input class="form-check-input item-checkbox" type="checkbox" name="produk_pilihan[]" value="<?php echo $id; ?>">
                                                 </td>
+
                                                 <td>
                                                     <div class="d-flex align-items-center py-2">
                                                         <img src="image/<?php echo $item['foto']; ?>" class="product-img shadow-sm border">
+
                                                         <div class="ms-3">
-                                                            <h6 class="mb-0 fw-bold text-dark"><?php echo $item['nama']; ?></h6>
+                                                            <h6 class="mb-0 fw-bold" style="color: var(--primary-dark);">
+                                                                <?php echo $item['nama']; ?>
+                                                            </h6>
                                                             <small class="text-muted">ID: #<?php echo $id; ?></small>
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td><span class="text-dark small fw-semibold">Rp <?php echo number_format($item['harga'], 0, ',', '.'); ?></span></td>
-                                                <td class="text-center">
-                                                    <input type="number" form="form-update-<?php echo $id; ?>" name="jumlah" class="form-control form-control-sm text-center mx-auto qty-input fw-bold" value="<?php echo $item['jumlah']; ?>" min="1" onchange="document.getElementById('form-update-<?php echo $id; ?>').submit()">
+
+                                                <td>
+                                                    <span class="text-dark small fw-semibold">
+                                                        Rp <?php echo number_format($item['harga'], 0, ',', '.'); ?>
+                                                    </span>
                                                 </td>
-                                                <td><span class="text-subtotal">Rp <?php echo number_format($subtotal, 0, ',', '.'); ?></span></td>
+
+                                                <td class="text-center">
+                                                    <input 
+                                                        type="number" 
+                                                        form="form-update-<?php echo $id; ?>" 
+                                                        name="jumlah" 
+                                                        class="form-control form-control-sm text-center mx-auto qty-input fw-bold" 
+                                                        value="<?php echo $item['jumlah']; ?>" 
+                                                        min="1" 
+                                                        onchange="document.getElementById('form-update-<?php echo $id; ?>').submit()"
+                                                    >
+                                                </td>
+
+                                                <td>
+                                                    <span class="text-subtotal">
+                                                        Rp <?php echo number_format($subtotal, 0, ',', '.'); ?>
+                                                    </span>
+                                                </td>
+
                                                 <td class="pe-4 text-end">
-                                                    <button type="button" class="btn btn-light btn-sm rounded-circle text-danger shadow-sm border" onclick="konfirmasiHapus('<?php echo $id; ?>')">
+                                                    <button type="button" class="btn btn-sm rounded-circle shadow-sm btn-remove" onclick="konfirmasiHapus('<?php echo $id; ?>')">
                                                         <i class="fas fa-times"></i>
                                                     </button>
                                                 </td>
@@ -207,27 +363,45 @@
             <div class="col-lg-4">
                 <div class="card card-ringkasan-fix shadow-sm">
                     <div class="summary-header">
-                        <h6 class="fw-bold mb-0"><i class="fas fa-receipt me-2"></i>Ringkasan Pesanan</h6>
+                        <h6 class="fw-bold mb-0">
+                            <i class="fas fa-receipt me-2"></i>Ringkasan Pesanan
+                        </h6>
                     </div>
+
                     <div class="card-body p-4">
                         <div class="d-flex justify-content-between mb-3">
-                            <span class="text-muted">Total Harga (<?php echo empty($_SESSION['keranjang']) ? 0 : count($_SESSION['keranjang']); ?> item)</span>
-                            <span class="fw-bold">Rp <?php echo number_format($total_belanja, 0, ',', '.'); ?></span>
+                            <span class="text-muted">
+                                Total Harga (<?php echo empty($_SESSION['keranjang']) ? 0 : count($_SESSION['keranjang']); ?> item)
+                            </span>
+                            <span class="fw-bold">
+                                Rp <?php echo number_format($total_belanja, 0, ',', '.'); ?>
+                            </span>
                         </div>
+
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <span class="text-muted">Biaya Pengiriman</span>
                             <span class="promo-badge">FREE SHIPPING</span>
                         </div>
-                        <hr class="my-4" style="border-style: dashed; color: #dee2e6;">
+
+                        <hr class="my-4" style="border-style: dashed; color: #ddd6fe;">
+
                         <div class="mb-4">
-                            <span class="d-block text-muted small mb-1 fw-bold text-uppercase">Total Pembayaran</span>
-                            <span class="total-price">Rp <?php echo number_format($total_belanja, 0, ',', '.'); ?></span>
+                            <span class="d-block text-muted small mb-1 fw-bold text-uppercase">
+                                Total Pembayaran
+                            </span>
+                            <span class="total-price">
+                                Rp <?php echo number_format($total_belanja, 0, ',', '.'); ?>
+                            </span>
                         </div>
+
                         <a href="checkout.php" class="btn btn-checkout w-100 fw-bold shadow-sm mb-3 <?php echo empty($_SESSION['keranjang']) ? 'disabled' : ''; ?>">
                             PROSES CHECKOUT <i class="fas fa-arrow-right ms-2"></i>
                         </a>
+
                         <div class="text-center">
-                            <small class="text-muted"><i class="fas fa-shield-alt me-1 text-blue-custom"></i> Pembayaran Aman & Terenkripsi</small>
+                            <small class="text-muted">
+                                <i class="fas fa-shield-alt me-1 text-lavender-custom"></i> Pembayaran Aman & Terenkripsi
+                            </small>
                         </div>
                     </div>
                 </div>
@@ -248,6 +422,7 @@
 
         function updateHapusButton() {
             const checkedCount = document.querySelectorAll('.item-checkbox:checked').length;
+
             if (checkedCount > 0) {
                 btnHapusMassal.classList.remove('d-none');
                 countTerpilih.innerText = checkedCount;
@@ -256,38 +431,50 @@
             }
         }
 
-        if(selectAll) {
+        if (selectAll) {
             selectAll.addEventListener('change', function() {
                 itemCheckboxes.forEach(cb => cb.checked = this.checked);
                 updateHapusButton();
             });
         }
 
-        itemCheckboxes.forEach(cb => { cb.addEventListener('change', updateHapusButton); });
-
-        btnHapusMassal.addEventListener('click', function() {
-            Swal.fire({
-                title: 'Hapus produk terpilih?',
-                text: "Item yang Anda pilih akan dikeluarkan dari keranjang.",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#dc3545',
-                confirmButtonText: 'Ya, hapus!',
-                cancelButtonText: 'Batal',
-                borderRadius: '15px'
-            }).then((result) => { if (result.isConfirmed) { document.getElementById('form-bulk-delete').submit(); } })
+        itemCheckboxes.forEach(cb => {
+            cb.addEventListener('change', updateHapusButton);
         });
+
+        if (btnHapusMassal) {
+            btnHapusMassal.addEventListener('click', function() {
+                Swal.fire({
+                    title: 'Hapus produk terpilih?',
+                    text: "Item yang Anda pilih akan dikeluarkan dari keranjang.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc3545',
+                    cancelButtonColor: '#7c3aed',
+                    confirmButtonText: 'Ya, hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById('form-bulk-delete').submit();
+                    }
+                });
+            });
+        }
 
         function konfirmasiHapus(id) {
             Swal.fire({
                 title: 'Keluarkan produk?',
                 icon: 'question',
                 showCancelButton: true,
-                confirmButtonColor: '#578FCA',
+                confirmButtonColor: '#7c3aed',
+                cancelButtonColor: '#6c757d',
                 confirmButtonText: 'Ya, hapus!',
-                cancelButtonText: 'Batal',
-                borderRadius: '15px'
-            }).then((result) => { if (result.isConfirmed) { window.location.href = "keranjang.php?hapus=" + id; } })
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "keranjang.php?hapus=" + id;
+                }
+            });
         }
 
         <?php if(isset($_SESSION['status_hapus'])): ?>
@@ -295,9 +482,8 @@
                 title: 'Berhasil!', 
                 text: 'Keranjang Anda telah diperbarui.', 
                 icon: 'success', 
-                confirmButtonColor: '#578FCA',
-                timer: 2000,
-                borderRadius: '15px'
+                confirmButtonColor: '#7c3aed',
+                timer: 2000
             });
             <?php unset($_SESSION['status_hapus']); ?>
         <?php endif; ?>
