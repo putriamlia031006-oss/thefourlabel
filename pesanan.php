@@ -22,19 +22,28 @@ $id_pelanggan   = $_SESSION['pelanggan']['id_pelanggan'];
 $nama_pelanggan = $_SESSION['pelanggan']['nama_pelanggan'];
 
 // =========================
-// QUERY PESANAN
+// QUERY PESANAN + DATA PELANGGAN
 // =========================
 $query = mysqli_query($koneksi,"
-    SELECT *
-    FROM tbl_transaksi
-    WHERE id_pelanggan = '$id_pelanggan'
-    ORDER BY id_transaksi DESC
+    SELECT 
+        t.*,
+        p.nama_pelanggan,
+        p.email_pelanggan,
+        p.telepon_pelanggan,
+        p.alamat_pelanggan
+    FROM tbl_transaksi t
+    LEFT JOIN pelanggan p ON t.id_pelanggan = p.id_pelanggan
+    WHERE t.id_pelanggan = '$id_pelanggan'
+    ORDER BY t.id_transaksi DESC
 ");
 
 if(!$query){
     die("Query Error : ".mysqli_error($koneksi));
 }
 
+// =========================
+// FUNCTION STATUS
+// =========================
 function statusClass($status){
     $status = strtolower($status);
 
@@ -62,6 +71,9 @@ function statusText($status){
         return 'Pending';
     }
 }
+
+// Menampung semua modal supaya tidak ditaruh di dalam tbody
+$modal_detail = "";
 ?>
 
 <!DOCTYPE html>
@@ -149,6 +161,17 @@ function statusText($status){
             background: rgba(255, 255, 255, 0.12);
             top: -90px;
             right: -60px;
+        }
+
+        .hero-card::after {
+            content: "";
+            position: absolute;
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.09);
+            bottom: -60px;
+            left: 40%;
         }
 
         .hero-content {
@@ -342,8 +365,50 @@ function statusText($status){
             font-weight: 800;
         }
 
-        .btn-close {
-            filter: invert(1);
+        .btn-close-custom {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255,255,255,0.20);
+            color: white;
+            font-size: 20px;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+
+        .btn-close-custom:hover {
+            background: rgba(255,255,255,0.35);
+        }
+
+        .detail-section {
+            background: #ffffff;
+            border: 1px solid rgba(124, 58, 237, 0.10);
+            border-radius: 20px;
+            padding: 18px;
+            margin-bottom: 18px;
+        }
+
+        .detail-section-title {
+            color: var(--primary-dark);
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .detail-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            color: var(--text-dark);
+            font-weight: 600;
         }
 
         .detail-product {
@@ -371,6 +436,7 @@ function statusText($status){
         .detail-total {
             color: var(--primary);
             font-weight: 800;
+            white-space: nowrap;
         }
 
         .summary-detail {
@@ -379,6 +445,24 @@ function statusText($status){
             padding: 18px;
             color: var(--primary-dark);
             font-weight: 800;
+        }
+
+        .summary-detail hr {
+            border-color: rgba(76, 29, 149, 0.18);
+            opacity: 1;
+        }
+
+        .info-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: #faf5ff;
+            color: var(--primary-dark);
+            border: 1px solid rgba(124, 58, 237, 0.12);
+            border-radius: 50px;
+            padding: 8px 13px;
+            font-weight: 800;
+            font-size: 13px;
         }
 
         @media (max-width: 768px) {
@@ -409,6 +493,14 @@ function statusText($status){
                 font-weight: 800;
                 color: var(--primary-dark);
             }
+
+            .detail-product .d-flex {
+                align-items: flex-start !important;
+            }
+
+            .detail-total {
+                font-size: 13px;
+            }
         }
     </style>
 </head>
@@ -436,12 +528,10 @@ function statusText($status){
                 Riwayat Transaksi
             </div>
 
-            <h2 class="hero-title">
-                Riwayat Pesanan Saya
-            </h2>
+            <h2 class="hero-title">Riwayat Pesanan Saya</h2>
 
             <p class="hero-desc">
-                Pantau status pesanan, total pembayaran, dan detail produk yang sudah kamu checkout.
+                Pantau status pesanan, total pembayaran, pengiriman, pembayaran, dan detail produk yang sudah kamu checkout.
             </p>
         </div>
     </div>
@@ -483,6 +573,33 @@ function statusText($status){
                             $class = statusClass($status);
                             $status_tampil = statusText($status);
 
+                            $nama_penerima = $data['nama_pelanggan'] ?? $nama_pelanggan;
+                            $email_penerima = $data['email_pelanggan'] ?? '-';
+                            $telepon_penerima = $data['telepon_pelanggan'] ?? '-';
+                            $alamat_penerima = $data['alamat_pelanggan'] ?? '-';
+
+                            $metode_pengambilan = $data['metode_pengambilan'] ?? '-';
+                            $ekspedisi = $data['ekspedisi'] ?? '-';
+                            $ongkir = $data['ongkir'] ?? 0;
+                            $metode_pembayaran = $data['metode_pembayaran'] ?? '-';
+                            $status_pembayaran = $data['status_pembayaran'] ?? '-';
+
+                            if($metode_pengambilan == ''){
+                                $metode_pengambilan = '-';
+                            }
+
+                            if($ekspedisi == ''){
+                                $ekspedisi = '-';
+                            }
+
+                            if($metode_pembayaran == ''){
+                                $metode_pembayaran = '-';
+                            }
+
+                            if($status_pembayaran == ''){
+                                $status_pembayaran = '-';
+                            }
+
                             $queryDetail = mysqli_query($koneksi, "
                                 SELECT 
                                     dt.*,
@@ -503,8 +620,10 @@ function statusText($status){
 
                             while($detail = mysqli_fetch_assoc($queryDetail)){
                                 $detail_items[] = $detail;
+
                                 $harga_produk = isset($detail['harga']) ? $detail['harga'] : 0;
                                 $jumlah_produk = isset($detail['jumlah']) ? $detail['jumlah'] : 0;
+
                                 $total_detail += $harga_produk * $jumlah_produk;
                             }
                         ?>
@@ -552,9 +671,10 @@ function statusText($status){
                             </td>
                         </tr>
 
-                        <!-- MODAL DETAIL -->
+                        <?php ob_start(); ?>
+
                         <div class="modal fade" id="detailModal<?= $id_transaksi; ?>" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog modal-lg modal-dialog-centered">
+                            <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
                                 <div class="modal-content">
 
                                     <div class="modal-header">
@@ -567,14 +687,20 @@ function statusText($status){
                                             </small>
                                         </div>
 
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        <button type="button"
+                                                class="btn-close-custom"
+                                                data-bs-dismiss="modal"
+                                                aria-label="Close">
+                                            &times;
+                                        </button>
                                     </div>
 
                                     <div class="modal-body p-4">
 
+                                        <!-- RINGKASAN STATUS -->
                                         <div class="row mb-4">
                                             <div class="col-md-4 mb-3">
-                                                <small class="text-muted fw-bold text-uppercase">Status</small>
+                                                <div class="detail-label">Status Pesanan</div>
                                                 <div>
                                                     <span class="status-badge <?= $class; ?>">
                                                         <i class="fa fa-circle"></i>
@@ -584,85 +710,226 @@ function statusText($status){
                                             </div>
 
                                             <div class="col-md-4 mb-3">
-                                                <small class="text-muted fw-bold text-uppercase">Total Produk</small>
-                                                <div class="fw-bold">
-                                                    <?= $data['total_produk']; ?> Produk
+                                                <div class="detail-label">Status Pembayaran</div>
+                                                <div>
+                                                    <span class="info-pill">
+                                                        <i class="fa fa-wallet"></i>
+                                                        <?= htmlspecialchars(ucfirst($status_pembayaran)); ?>
+                                                    </span>
                                                 </div>
                                             </div>
 
                                             <div class="col-md-4 mb-3">
-                                                <small class="text-muted fw-bold text-uppercase">Total Harga</small>
+                                                <div class="detail-label">Total Pembayaran</div>
                                                 <div class="price-text">
                                                     Rp <?= number_format($data['total_harga'],0,',','.'); ?>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <h6 class="fw-bold mb-3" style="color: var(--primary-dark);">
-                                            <i class="fa fa-shirt me-2"></i>Produk dalam Pesanan
-                                        </h6>
+                                        <!-- INFORMASI PENERIMA -->
+                                        <div class="detail-section">
+                                            <h6 class="detail-section-title">
+                                                <i class="fa fa-user me-2"></i>Informasi Penerima
+                                            </h6>
 
-                                        <?php if(count($detail_items) > 0){ ?>
-
-                                            <?php foreach($detail_items as $item){ ?>
-
-                                                <?php
-                                                    $nama_produk = $item['nama'] ?? 'Produk tidak ditemukan';
-                                                    $foto_produk = $item['foto'] ?? '';
-                                                    $harga_produk = $item['harga'] ?? 0;
-                                                    $jumlah_produk = $item['jumlah'] ?? 0;
-                                                    $subtotal = $harga_produk * $jumlah_produk;
-                                                ?>
-
-                                                <div class="detail-product">
-                                                    <div class="d-flex align-items-center">
-                                                        <?php if($foto_produk != ''){ ?>
-                                                            <img src="image/<?= $foto_produk; ?>" class="detail-img me-3">
-                                                        <?php } else { ?>
-                                                            <div class="detail-img me-3 d-flex align-items-center justify-content-center">
-                                                                <i class="fa fa-image text-muted"></i>
-                                                            </div>
-                                                        <?php } ?>
-
-                                                        <div class="flex-grow-1">
-                                                            <div class="detail-name">
-                                                                <?= htmlspecialchars($nama_produk); ?>
-                                                            </div>
-
-                                                            <small class="text-muted">
-                                                                <?= $jumlah_produk; ?> x Rp <?= number_format($harga_produk,0,',','.'); ?>
-                                                            </small>
-                                                        </div>
-
-                                                        <div class="detail-total">
-                                                            Rp <?= number_format($subtotal,0,',','.'); ?>
-                                                        </div>
+                                            <div class="row">
+                                                <div class="col-md-6 mb-3">
+                                                    <div class="detail-label">Nama Penerima</div>
+                                                    <div class="detail-value">
+                                                        <?= htmlspecialchars($nama_penerima); ?>
                                                     </div>
                                                 </div>
 
+                                                <div class="col-md-6 mb-3">
+                                                    <div class="detail-label">Email</div>
+                                                    <div class="detail-value">
+                                                        <?= htmlspecialchars($email_penerima); ?>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-6 mb-3">
+                                                    <div class="detail-label">No HP / WhatsApp</div>
+                                                    <div class="detail-value">
+                                                        <?= htmlspecialchars($telepon_penerima); ?>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-6 mb-3">
+                                                    <div class="detail-label">Alamat</div>
+                                                    <div class="detail-value">
+                                                        <?= htmlspecialchars($alamat_penerima); ?>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- INFORMASI PENGAMBILAN / PENGIRIMAN -->
+                                        <div class="detail-section">
+                                            <h6 class="detail-section-title">
+                                                <i class="fa fa-truck me-2"></i>Informasi Pengambilan / Pengiriman
+                                            </h6>
+
+                                            <div class="row">
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="detail-label">Metode</div>
+                                                    <div class="detail-value">
+                                                        <?= htmlspecialchars($metode_pengambilan); ?>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="detail-label">Ekspedisi</div>
+                                                    <div class="detail-value">
+                                                        <?php if(strtolower($metode_pengambilan) == "ambil di toko"){ ?>
+                                                            Ambil langsung di toko
+                                                        <?php } else { ?>
+                                                            <?= htmlspecialchars($ekspedisi); ?>
+                                                        <?php } ?>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="detail-label">Ongkir</div>
+                                                    <div class="detail-value">
+                                                        Rp <?= number_format($ongkir,0,',','.'); ?>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- INFORMASI PEMBAYARAN -->
+                                        <div class="detail-section">
+                                            <h6 class="detail-section-title">
+                                                <i class="fa fa-credit-card me-2"></i>Informasi Pembayaran
+                                            </h6>
+
+                                            <div class="row">
+                                                <div class="col-md-6 mb-3">
+                                                    <div class="detail-label">Metode Pembayaran</div>
+                                                    <div class="detail-value">
+                                                        <?= htmlspecialchars($metode_pembayaran); ?>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-6 mb-3">
+                                                    <div class="detail-label">Keterangan</div>
+                                                    <div class="detail-value">
+                                                        <?php 
+                                                            $metode_lower = strtolower($metode_pembayaran);
+
+                                                            if($metode_lower == "cod"){
+                                                                echo "Bayar langsung saat pesanan diterima.";
+                                                            } elseif($metode_lower == "transfer bank" || $metode_lower == "transfer bank bca"){
+                                                                echo "Pembayaran melalui transfer bank.";
+                                                            } elseif($metode_lower == "e-wallet" || $metode_lower == "ewallet"){
+                                                                echo "Pembayaran melalui dompet digital.";
+                                                            } elseif($metode_lower == "qris"){
+                                                                echo "Pembayaran melalui QRIS.";
+                                                            } else {
+                                                                echo htmlspecialchars($metode_pembayaran);
+                                                            }
+                                                        ?>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- PRODUK DALAM PESANAN -->
+                                        <div class="detail-section mb-0">
+                                            <h6 class="detail-section-title">
+                                                <i class="fa fa-shirt me-2"></i>Produk dalam Pesanan
+                                            </h6>
+
+                                            <?php if(count($detail_items) > 0){ ?>
+
+                                                <?php foreach($detail_items as $item){ ?>
+
+                                                    <?php
+                                                        $nama_produk = $item['nama'] ?? 'Produk tidak ditemukan';
+                                                        $foto_produk = $item['foto'] ?? '';
+                                                        $harga_produk = $item['harga'] ?? 0;
+                                                        $jumlah_produk = $item['jumlah'] ?? 0;
+                                                        $subtotal = $harga_produk * $jumlah_produk;
+                                                    ?>
+
+                                                    <div class="detail-product">
+                                                        <div class="d-flex align-items-center">
+                                                            <?php if($foto_produk != ''){ ?>
+                                                                <img src="image/<?= htmlspecialchars($foto_produk); ?>" class="detail-img me-3">
+                                                            <?php } else { ?>
+                                                                <div class="detail-img me-3 d-flex align-items-center justify-content-center">
+                                                                    <i class="fa fa-image text-muted"></i>
+                                                                </div>
+                                                            <?php } ?>
+
+                                                            <div class="flex-grow-1">
+                                                                <div class="detail-name">
+                                                                    <?= htmlspecialchars($nama_produk); ?>
+                                                                </div>
+
+                                                                <small class="text-muted d-block">
+                                                                    Harga Satuan:
+                                                                    Rp <?= number_format($harga_produk,0,',','.'); ?>
+                                                                </small>
+
+                                                                <small class="text-muted d-block">
+                                                                    Jumlah:
+                                                                    <?= $jumlah_produk; ?> pcs
+                                                                </small>
+                                                            </div>
+
+                                                            <div class="text-end">
+                                                                <small class="text-muted d-block">Subtotal</small>
+                                                                <div class="detail-total">
+                                                                    Rp <?= number_format($subtotal,0,',','.'); ?>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                <?php } ?>
+
+                                                <div class="summary-detail mt-3">
+                                                    <div class="d-flex justify-content-between mb-2">
+                                                        <span>Subtotal Produk</span>
+                                                        <span>Rp <?= number_format($total_detail,0,',','.'); ?></span>
+                                                    </div>
+
+                                                    <div class="d-flex justify-content-between mb-2">
+                                                        <span>Ongkir</span>
+                                                        <span>Rp <?= number_format($ongkir,0,',','.'); ?></span>
+                                                    </div>
+
+                                                    <hr>
+
+                                                    <div class="d-flex justify-content-between fs-5">
+                                                        <span>Total Pembayaran</span>
+                                                        <span>Rp <?= number_format($data['total_harga'],0,',','.'); ?></span>
+                                                    </div>
+                                                </div>
+
+                                            <?php } else { ?>
+
+                                                <div class="alert alert-warning rounded-4">
+                                                    <i class="fa fa-exclamation-circle me-2"></i>
+                                                    Detail produk belum tersedia untuk transaksi ini.
+                                                    Pastikan proses checkout sudah menyimpan data ke tabel
+                                                    <b>tbl_detail_transaksi</b>.
+                                                </div>
+
                                             <?php } ?>
-
-                                            <div class="summary-detail d-flex justify-content-between mt-3">
-                                                <span>Total Produk</span>
-                                                <span>Rp <?= number_format($total_detail,0,',','.'); ?></span>
-                                            </div>
-
-                                        <?php } else { ?>
-
-                                            <div class="alert alert-warning rounded-4">
-                                                <i class="fa fa-exclamation-circle me-2"></i>
-                                                Detail produk belum tersedia untuk transaksi ini.
-                                                Kemungkinan transaksi dibuat sebelum proses checkout menyimpan data ke tabel
-                                                <b>tbl_detail_transaksi</b>.
-                                            </div>
-
-                                        <?php } ?>
+                                        </div>
 
                                     </div>
 
                                 </div>
                             </div>
                         </div>
+
+                        <?php
+                            $modal_detail .= ob_get_clean();
+                        ?>
 
                     <?php } ?>
 
@@ -687,6 +954,9 @@ function statusText($status){
     </div>
 
 </div>
+
+<!-- MODAL DITARUH DI LUAR TABEL SUPAYA TOMBOL X BERFUNGSI -->
+<?= $modal_detail; ?>
 
 <script src="bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
 <script src="fontawesome/js/all.min.js"></script>
